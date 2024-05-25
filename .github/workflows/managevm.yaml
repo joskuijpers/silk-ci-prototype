@@ -14,7 +14,7 @@ jobs:
 
     name: start
     steps: 
-      - run: echo 'Hello world: start'
+      - run: echo 'Hello world start'
 
   stopvm:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
 
     name: stop
     steps: 
-      - run: echo 'Hello world: stop potentially'
+      - run: echo 'Hello world stop potentially'
     
 
       # - name: Azure Login
