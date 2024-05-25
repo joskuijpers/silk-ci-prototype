@@ -1,0 +1,27 @@
+name: stopvm
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 15 * * 1-5'
+    - cron: '19 15 * * 1-5'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    name: shutdown
+    steps: 
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_VM_CREDENTIALS }}  
+
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az vm stop --resource-group VMresourcegroup --name VMname
+            az vm deallocate --resource-group VM resource group --name VMname
