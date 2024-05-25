@@ -8,30 +8,50 @@ on:
     - completed
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps: 
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps: 
+  #     - name: Dump GitHub context
+  #       env:
+  #         GITHUB_CONTEXT: ${{ toJson(github) }}
+  #       run: |
+  #         echo "$GITHUB_CONTEXT"
   
   startvm:
     runs-on: ubuntu-latest
     if: ${{ github.event.action == 'requested' }}
 
     steps: 
-      - run: echo 'Hello world start'
+      - run: echo 'Starting VM with build agent'
+
+      # - name: Azure Login
+      #   uses: Azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_VM_CREDENTIALS }}  
+
+      # - name: Azure CLI script
+      #   uses: azure/CLI@v1
+      #   with:
+      #     azcliversion: 2.30.0
+      #     inlineScript: |
+      #       az vm start --resource-group VMresourcegroup --name VMname
+
+      # Note: for a full reset from a snapshot:
+      # az vm delete --resource-group VMresourcegroup --name VMname
+      # az vm create --resource-group VMresourcegroup --name VMname --source-resource SnapshotId
+
 
   stopvm:
     runs-on: ubuntu-latest
     if: ${{ github.event.action == 'completed' }}
 
     steps: 
-      - run: echo 'Hello world stop potentially'
-      # - run: sleep 300
+      - run: echo 'Waiting for other VM jobs...'
 
+      # Wait 5 minutes for other jobs to appear
+      - run: sleep 300
+
+      # Find any in progress jobs
       - uses: octokit/request-action@v2.x
         id: get_in_progress_workflows
         with:
@@ -41,6 +61,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Find any queued jobs
       - uses: octokit/request-action@v2.x
         id: get_queued_workflows
         with:
@@ -50,9 +71,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Stop VM if no other job
+      # If there are no other jobs using this VM, shut it down
+      - name: Stop VM
         if: ${{ steps.get_in_progress_workflows.outputs.data.total_count == 0 && steps.get_queued_workflows.outputs.data.total_count == 0 }}
-        run: echo 'Stop VM'
+        run: echo 'Stopping VM'
 
       # - name: Azure Login
       #   uses: Azure/login@v1
