@@ -30,7 +30,23 @@ jobs:
 
     steps: 
       - run: echo 'Hello world stop potentially'
-    
+      # - run: sleep 300
+
+      - uses: octokit/request-action@v2.x
+        id: get_running_jobs
+        with:
+          route: GET /repos/{repo}/actions/workflows/{workflow_id}/runs?status=in_progress,queued,requested,waiting,pending
+          repo: ${{ github.repository }}
+          workflow_id: ${{ github.event.workflow.id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Dump test context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(steps.get_running_jobs.outputs.data) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
+
 
       # - name: Azure Login
       #   uses: Azure/login@v1
