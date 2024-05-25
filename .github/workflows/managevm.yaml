@@ -52,7 +52,7 @@ jobs:
 
       - name: Stop VM if no other job
         if: ${{ steps.get_in_progress_workflows.outputs.data.total_count == 0 && steps.get_queued_workflows.outputs.data.total_count == 0 }}
-        run: echo 'Stop VM
+        run: echo 'Stop VM'
 
       # - name: Azure Login
       #   uses: Azure/login@v1
