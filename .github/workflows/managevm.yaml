@@ -1,0 +1,39 @@
+name: stopvm
+
+on:
+  workflow_run:
+    workflows: [demo]
+    types:
+    - requested
+    - completed
+
+jobs:
+  startvm:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.action == 'requested' }}
+
+    name: start
+    steps: 
+      - run: echo 'Hello world: start'
+
+  stopvm:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.action == 'completed' }}
+
+    name: stop
+    steps: 
+      - run: echo 'Hello world: stop potentially'
+    
+
+      # - name: Azure Login
+      #   uses: Azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_VM_CREDENTIALS }}  
+
+      # - name: Azure CLI script
+      #   uses: azure/CLI@v1
+      #   with:
+      #     azcliversion: 2.30.0
+      #     inlineScript: |
+      #       az vm stop --resource-group VMresourcegroup --name VMname
+      #       az vm deallocate --resource-group VM resource group --name VMname
