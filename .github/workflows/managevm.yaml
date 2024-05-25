@@ -1,4 +1,4 @@
-name: stopvm
+name: managevm
 
 on:
   workflow_run:
@@ -8,11 +8,15 @@ on:
     - completed
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - run: echo '${{ github.event.workflow_run.action }}'
+  
   startvm:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.action == 'requested' }}
 
-    name: start
     steps: 
       - run: echo 'Hello world start'
 
@@ -20,7 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.action == 'completed' }}
 
-    name: stop
     steps: 
       - run: echo 'Hello world stop potentially'
     
