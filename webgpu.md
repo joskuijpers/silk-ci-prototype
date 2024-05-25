@@ -28,8 +28,6 @@ WGPU native as backend
 > Native cross-platform builds of the wgpu-rs project are provided in
 > **Silk.NET.WebGPU.Native.WGPU**.
 
-Do GetApi()
-
 ```csharp
 // Retrieve the entrance to the API. This will look up a native implementation
 // of WebGPU, such as WGPU.
@@ -42,6 +40,9 @@ unsafe
     var instance = wgpu.CreateInstance(new InstanceDescriptor());
 }
 ```
+
+The C# API closely matches the standard API.
+Read more about using WebGPU at [webgpufundamentals](https://webgpufundamentals.org) or [MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API).
 
 ## Usage of unmanaged pointers
 
