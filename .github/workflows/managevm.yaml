@@ -11,7 +11,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps: 
-      - run: echo '${{ github.event.workflow_run.action }}'
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB_CONTEXT"
   
   startvm:
     runs-on: ubuntu-latest
