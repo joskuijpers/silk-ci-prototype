@@ -33,20 +33,26 @@ jobs:
       # - run: sleep 300
 
       - uses: octokit/request-action@v2.x
-        id: get_running_jobs
+        id: get_in_progress_workflows
         with:
-          route: GET /repos/{repo}/actions/workflows/{workflow_id}/runs?status=in_progress,queued,requested,waiting,pending
+          route: GET /repos/{repo}/actions/workflows/{workflow_id}/runs?status=in_progress
           repo: ${{ github.repository }}
           workflow_id: ${{ github.event.workflow.id }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Dump test context
+      - uses: octokit/request-action@v2.x
+        id: get_queued_workflows
+        with:
+          route: GET /repos/{repo}/actions/workflows/{workflow_id}/runs?status=queued
+          repo: ${{ github.repository }}
+          workflow_id: ${{ github.event.workflow.id }}
         env:
-          GITHUB_CONTEXT: ${{ toJson(steps.get_running_jobs.outputs.data) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Stop VM if no other job
+        if: ${{ steps.get_in_progress_workflows.outputs.data.total_count == 0 && steps.get_queued_workflows.outputs.data.total_count == 0 }}
+        run: echo 'Stop VM
 
       # - name: Azure Login
       #   uses: Azure/login@v1
