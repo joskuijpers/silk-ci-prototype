@@ -19,14 +19,14 @@ jobs:
   
   startvm:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.action == 'requested' }}
+    if: ${{ github.event.action == 'requested' }}
 
     steps: 
       - run: echo 'Hello world start'
 
   stopvm:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.action == 'completed' }}
+    if: ${{ github.event.action == 'completed' }}
 
     steps: 
       - run: echo 'Hello world stop potentially'
